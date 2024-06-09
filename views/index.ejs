@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap"
+        rel="stylesheet"> <!-- font-->
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.0/purify.min.js"></script>
+
+    <title>Investigacion </title>
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de investigacion</h1>
+        <div class="main">
+
+            <form class="formulario" id="formulario">
+                <input type="text" name="" id="txt_id" hidden>
+                <div class="form-field">
+                    <label for="txt_investigador">Investigador:</label>
+                    <input type="text" id="txt_investigador" name="" required><br><br>
+                </div>
+
+
+                <div class="form-field">
+                    <label for="txt_investigado">Investigado:</label>
+                    <input type="text" id="txt_investigado" name="" required><br><br>
+                </div>
+
+                <div class="form-field">
+                    <label for="txt_dateIni">Fecha de inicio:</label>
+                    <input type="date" id="txt_dateIni" name="" required><br><br>
+                </div>
+
+                <div class="form-field">
+                    <label for="txt_dateFin">Fecha de finalizacion:</label>
+                    <input type="date" id="txt_dateFin" name="" required><br><br>
+                </div>
+
+                <div class="form-field">
+                    <label for="txt_observacion">Observaciones:</label>
+                    <input type="text" id="txt_observacion" name="" required><br><br>
+                </div>
+
+
+                <button type="submit" class="btn_submit">Enviar</button>
+            </form>
+
+            <div class="lista">
+                <h2>Investigaciones:</h2>
+
+                <ul class="items">
+                    <!-- ACA VAN LOS DATOS DEL BACKEND-->
+                </ul>
+                <div class="loader hidden">
+                    <div class="lds-ring">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="container_popup hidden">
+        <div class="popup">
+            <h2 class="popup_title">Investigacion</h2>
+            <div class="popup_items">
+                <div class="popup_item">
+                    <p class="popup_item_title">Titulo</p>
+                    <p class="popup_item_description">TItulo tarea</p>
+                </div>
+            </div>
+            <span class="popup_exit">x</span>
+
+        </div>
+    </div>
+
+
+    <style>
+        .popup_item{
+            margin-bottom: 25px;
+        }
+        .popup_exit{
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            cursor: pointer;
+        }
+        .popup_title{
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        .popup_item_title{
+            margin-bottom: 15px;
+            font-size: 22px;
+            font-weight: 600;
+        }
+        .popup{
+            background: #352f5b;
+            padding: 30px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            row-gap: 20px;
+            min-width: 350px;
+            position: relative;
+        }
+        
+
+        .container_popup{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%; /* Ejemplo de ancho */
+            height: 100vh; /* Ejemplo de altura */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0,0,0,.5);
+        }
+        .container_popup.hidden{
+            display: none;
+        }
+        #audio_hecho {
+            display: none;
+        }
+
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader.hidden {
+            display: none;
+        }
+
+        .item .mask,.item .line {
+            position: absolute;
+        }
+
+        .item.estado .mask {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, .2);
+            left: 0;
+            border-radius: 8px;
+        }
+
+        .item.estado .line {
+            width: 95%;
+            border: 1px solid gray;
+            left: 2.5%;
+        }
+
+        .item .actions {
+            flex: 1;
+            display: flex;
+            justify-content: end;
+            column-gap: 10px;
+        }
+
+        .item p {
+            flex: 1;
+        }
+
+        .btn_editar:hover {
+            background-color: rgba(0, 0, 255, .2);
+            color: white;
+        }
+
+        .btn_eliminar:hover {
+            color: white;
+            background-color: rgba(255, 0, 0, .2);
+        }
+
+        .btn_item {
+            padding: 5px 10px;
+            font-weight: 700;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn_submit {
+            font-weight: 700;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            align-items: center;
+            border-radius: 6px;
+            cursor: pointer;
+            column-gap: 5px;
+            position: relative;
+        }
+
+        .item:hover {
+            background-color: rgba(0, 0, 0, .2);
+        }
+
+        .items {
+            display: flex;
+            flex-direction: column;
+            row-gap: 20px;
+            list-style: none;
+        }
+
+        .lista {
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            row-gap: 20px;
+            width: 100%;
+            box-shadow: 5px 6px 29px 0px rgba(0, 0, 0, 0.75);
+            -webkit-box-shadow: 5px 6px 29px 0px rgba(0, 0, 0, 0.75);
+            -moz-box-shadow: 5px 6px 29px 0px rgba(0, 0, 0, 0.75);
+        }
+
+        .form_field label {
+            margin-bottom: 5px;
+        }
+
+        .form_field {
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        .formulario {
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            row-gap: 20px;
+            width: 100%;
+            box-shadow: 5px 6px 29px 0px rgba(0, 0, 0, 0.75);
+            -webkit-box-shadow: 5px 6px 29px 0px rgba(0, 0, 0, 0.75);
+            -moz-box-shadow: 5px 6px 29px 0px rgba(0, 0, 0, 0.75);
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            row-gap: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            padding: 20px;
+            padding-top: 50px;
+            max-width: 1440px;
+            margin: auto;
+        }
+
+        body {
+            background-color: #352f5b;
+            color: white;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: "Josefin Sans", sans-serif;
+        }
+
+        input {
+            background: rgba(0, 0, 0, 0.2);
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+        }
+
+        input:focus {
+            outline: none;
+        }
+
+        @media (min-width: 1024px) {
+            .main {
+                flex-direction: row;
+                column-gap: 40px;
+            }
+
+            h1 {
+                font-size: 42px;
+            }
+        }
+
+        .lds-ring,
+        .lds-ring div {
+            box-sizing: border-box;
+        }
+
+        .lds-ring {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .lds-ring div {
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            margin: 8px;
+            border: 8px solid currentColor;
+            border-radius: 50%;
+            animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            border-color: currentColor transparent transparent transparent;
+        }
+
+        .lds-ring div:nth-child(1) {
+            animation-delay: -0.45s;
+        }
+
+        .lds-ring div:nth-child(2) {
+            animation-delay: -0.3s;
+        }
+
+        .lds-ring div:nth-child(3) {
+            animation-delay: -0.15s;
+        }
+
+        @keyframes lds-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+    <script>
+        const url_api = 'http://localhost:5000'
+        window.onload = initApp();
+        let INVESTIGACION = null;
+        const soundDone = 'hecho.mp3'
+        const soundUndone = 'no_hecho.mp3'
+        const soundCreateItem = 'crear_item.mp3'
+
+        async function initApp() {
+            await initList();
+            initForm();
+            initPopup();
+        }
+
+        function initPopup(){
+            initBtnExit();
+        }
+
+        function initBtnExit(){
+            const btn = document.querySelector('.popup_exit')
+
+            if(!btn) return
+
+            btn.addEventListener('click',() => {changeVisiblePopup(false)})
+        }
+
+        function playSound(name) {
+            var sound = new Audio("assets/" + name)
+
+            if (!sound) {
+                console.log("no se ha encontrado el sonido")
+                return
+            }
+
+            sound.play()
+        }
+
+        function initForm() {
+            const formulario = document.querySelector('#formulario')
+
+            if (!formulario) {
+                console.log('No existe el formulario!')
+                return
+            }
+            formulario.addEventListener('submit', handleSubmit)
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault()
+
+            const inputId = document.querySelector('#txt_id');
+            const inputInvestigador = document.querySelector('#txt_investigador')
+            const inputInvestigado = document.querySelector('#txt_investigado')
+            const inputDateIni = document.querySelector('#txt_dateIni')
+            const inputDateFin = document.querySelector('#txt_dateFin')
+            const inputObservacion = document.querySelector('#txt_observacion')
+
+
+            if (!inputInvestigador || !inputInvestigador.value) {
+                alert('no tiene valor el investigador')
+                return
+            }
+            if (!inputInvestigado || !inputInvestigado.value) {
+                alert('no tiene valor el investigado')
+                return
+            }
+            if (!inputDateIni || !inputDateIni.value) {
+                alert('no tiene valor el date inicial')
+                return
+            }
+            if (!inputDateFin || !inputDateFin.value) {
+                alert('no tiene valor el date final')
+                return
+            }
+            if (!inputObservacion || !inputObservacion.value) {
+                alert('no tiene valor la observacion')
+                return
+            }
+
+
+            let res = null;
+
+            if (inputId && inputId.value) {
+                res = await actualizarInvestigacion(
+                    inputInvestigador.value,
+                    inputInvestigado.value,
+                    inputDateIni.value,
+                    inputDateFin.value,
+                    inputObservacion.value,
+                    inputId.value
+                )
+            } else {
+                res = await crearInvestigacion(
+                    inputInvestigador.value,
+                    inputInvestigado.value,
+                    inputDateIni.value,
+                    inputDateFin.value,
+                    inputObservacion.value,
+                )
+            }
+
+
+            const data = await res.json()
+
+            if (!data.success) {
+                console.log(data.message)
+                return
+            }
+
+            playSound(soundCreateItem)
+
+            cleanInput(inputInvestigador)
+            cleanInput(inputInvestigado)
+            cleanInput(inputDateIni)
+            cleanInput(inputDateFin)
+            cleanInput(inputObservacion)
+            cleanInput(inputId)
+
+            await initList()
+        }
+
+        async function actualizarInvestigacion(investigador, investigado, dateInicio, dateFinal, observacion, id) {
+            const res = await fetch(`${url_api}/entidad/actualizar/${id}`, {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": 'application/json'
+                },
+                body: JSON.stringify({
+                    investigador,
+                    investigado,
+                    dateInicio,
+                    dateFinal,
+                    observacion
+                })
+            });
+            return res;
+        }
+
+        async function crearInvestigacion(investigador, investigado, dateInicio, dateFinal, observacion) {
+            const res = await fetch(`${url_api}/entidad/crear`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": 'application/json'
+                },
+                body: JSON.stringify({
+                    investigador,
+                    investigado,
+                    dateInicio,
+                    dateFinal,
+                    observacion
+                })
+            });
+            return res;
+        }
+
+
+        function cleanInput(inputHtml) { //limpia los imputs al finalizar la creacion
+            inputHtml.value = ''
+        }
+
+        async function initList() {
+            const containerItems = document.querySelector('.lista .items')
+
+            if (!containerItems) {
+                console.log("no existe div de items")
+                return
+            }
+
+            changeVisibleLoader(true)
+            containerItems.innerHTML = ""
+
+            const res = await getListData()
+
+            if (!res.ok) {
+                console.log(res.messge)
+                return
+            }
+
+            if (!Array.isArray(res.data)) {
+                console.log("no es array")
+                return
+            }
+
+            let itemsHtml = ""
+            INVESTIGACION = res.data
+            console.log("INIT LIST: ",INVESTIGACION)
+
+            for (let i = 0; i < res.data.length; i++) {
+                const investigacion = res.data[i];
+
+                itemsHtml += getHtmlItem(investigacion.investigador, investigacion._id, investigacion.estado)
+            }
+
+            changeVisibleLoader(false)
+            //aqui metemos todos los items en la lista
+            containerItems.innerHTML = itemsHtml;
+
+            //inicializar los botones eliminar
+            initDeleteButtons();
+
+            //inicializar los botones de actualizar
+            initUpdateButtons();
+
+            //inicializamos los botones para abrir popup
+            initShowButtons()
+
+            //inicializar los items
+            initItems();
+        }
+
+        function initShowButtons(){
+            const buttons = document.querySelectorAll('.btn_ver')
+            if(!buttons) return
+
+            for (let i=0; i < buttons.length; i++) {
+                const button = buttons[i]
+
+                button.addEventListener('click', handleClickShow)
+            }
+        }
+
+        function handleClickShow(event){
+            event.stopPropagation()
+
+            const idInvestigacion = event.target.getAttribute('data-idInvestigacion')
+            const containerPopup = document.querySelector('.container_popup')
+
+            if(!idInvestigacion || !containerPopup ) return
+
+            const investigacion = INVESTIGACION.find(x => x._id == idInvestigacion)
+
+            if(!investigacion) return
+
+            changeVisiblePopup(true)
+
+            fillPopup(investigacion)
+        }
+
+        function fillPopup(investigacion){
+            if(!investigacion||typeof(investigacion) != 'object') return
+            const container = document.querySelector('.popup_items')
+            if(!container) return
+            
+
+
+            const keys = Object.keys(investigacion)
+            const availableKeys = ["investigador", "investigado","dateInicio","dateFinal","observacion"]
+            const availableKeysAux = ["Investigador", "Investigado","Fecha de inicio","Fecha de finalizacion","Observaciones"]
+            let html = ""
+
+            for (let i = 0; i < availableKeys.length; i++) {
+                const key = availableKeys[i]
+                const keyAux = availableKeysAux[i]
+                
+                if(keys.includes(key)){
+                    html += getHtmlItemPopup(keyAux, investigacion[key])
+                }
+            }
+
+            container.innerHTML = html
+
+        }
+
+        function changeVisiblePopup(visible){
+            const containerPopup = document.querySelector('.container_popup')
+
+            if(visible){
+                containerPopup.classList.remove('hidden')
+            }else{
+                containerPopup.classList.add('hidden')
+            }
+        }
+
+        function getHtmlItemPopup(title, content){
+            return `
+                <div class="popup_item">
+                    <p class="popup_item_title">${DOMPurify.sanitize(title, {ALLOWED_TAGS: [], ALLOWED_ATTR: []})}: </p>
+                    <p class="popup_item_description">${DOMPurify.sanitize(content, {ALLOWED_TAGS: [], ALLOWED_ATTR: []})}</p>
+                </div>
+            `
+        }
+
+       // #region Items
+        function initItems() {
+            const items = document.querySelectorAll('.lista .items .item')
+            if (!items) {
+                console.log("no hay items")
+                return
+            }
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                item.addEventListener('click', handleClickItem)
+            }
+        }
+
+        async function handleClickItem(event) {
+
+            let idInvestigacion = null
+            const isItem = event.target.classList.contains('item')
+            if (!isItem) {
+                idInvestigacion = event.target.parentElement.getAttribute('data-idInvestigacion')
+            } else {
+                idInvestigacion = event.target.getAttribute('data-idInvestigacion')
+            }
+
+            if (!idInvestigacion) {
+                console.log("no hay id de investigacion")
+                return
+            }
+
+            // busco la tarea
+            const investigacion = INVESTIGACION.find(x => x._id == idInvestigacion)
+            //creo el body
+            const body = { estado: !investigacion.estado }
+
+            //play sound
+            if (investigacion.estado) {
+                playSound(soundUndone)
+            } else {
+                playSound(soundDone)
+            }
+
+            //le pego a la api
+            const res = await fetch(`${url_api}/entidad/actualizar/${idInvestigacion}`, {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+
+            const data = await res.json()
+
+            if (data.error) {
+                console.log(data.message)
+                return
+            }
+
+            await initList()
+        }
+
+        // #endregion 
+        function initUpdateButtons() {
+            const buttons = document.querySelectorAll('.btn_editar')
+
+            if (!buttons) {
+                console.log("no hay botones")
+                return
+            }
+
+            for (let i = 0; i < buttons.length; i++) {
+                const button = buttons[i];
+
+                button.addEventListener('click', handleClickUpdateButton)
+            }
+        }
+
+        function handleClickUpdateButton(event) {
+            event.stopPropagation()
+            const idInvestigacion = event.target.getAttribute('data-idInvestigacion')
+
+            const investigacion = INVESTIGACION.find(x => x._id == idInvestigacion)
+
+            fillForm(investigacion.investigador, investigacion.investigado, investigacion.dateInicio, investigacion.dateFinal, investigacion.observacion, investigacion._id)
+        }
+
+        function fillForm(investigador, investigado, dateIni, dateFin, Observacion, id) {
+            const txtInvestigador = document.querySelector('#txt_investigador')
+            const txtInvestigado = document.querySelector('#txt_investigado')
+            const txtDateIni = document.querySelector('#txt_dateIni')
+            const txtDateFin = document.querySelector('#txt_dateFin')
+            const txtObservacion = document.querySelector('#txt_observacion')
+            const txtId = document.querySelector('#txt_id')
+
+            // formatear date a yyyy-MM-dd
+            function formatDate(dateStr) {
+                let date = new Date(dateStr);
+                let year = date.getFullYear();
+                let month = (date.getMonth() + 1).toString().padStart(2, '0');
+                let day = date.getDate().toString().padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+
+            txtInvestigador.value = investigador
+            txtInvestigado.value = investigado
+            txtDateIni.value = formatDate(dateIni);
+            txtDateFin.value = formatDate(dateFin); 
+            txtObservacion.value = Observacion
+            txtId.value = id
+        }
+
+        function initDeleteButtons() {
+            
+
+            const buttons = document.querySelectorAll('.btn_eliminar')
+
+            if (!buttons) {
+                console.log("no hay botones")
+                return
+            }
+
+            for (let i = 0; i < buttons.length; i++) {
+                const button = buttons[i];
+
+                button.addEventListener('click', handleClickDeleteButton)
+            }
+
+        }
+
+        async function handleClickDeleteButton(event) {
+            event.stopPropagation()
+            const idInvestigacion = event.target.getAttribute('data-idInvestigacion')
+
+            const res = await fetch(`${url_api}/entidad/borrar/${idInvestigacion}`, {
+                method: 'PATCH'
+            })
+
+            const data = await res.json()
+
+            if (data.error) {
+
+                console.log("Error al eliminar: ", data.messge)
+                alert('ocurrio un error al borrar la entidad')
+            }
+
+            alert(`investigacion con id ${idInvestigacion} eliminada correctamente`)
+
+            await initList()
+        }
+
+        function getHtmlItem(investigador, idInvestigacion, estado) {
+            const html = `
+                <li class="item ${estado ? 'estado' : ''}" data-idInvestigacion="${idInvestigacion}" data-estado="${estado}">
+                    <p>${DOMPurify.sanitize(investigador, {ALLOWED_TAGS: [], ALLOWED_ATTR: []})}</p>
+                    <div class="actions">
+                        <button class="btn_item btn_ver" data-idInvestigacion="${idInvestigacion}">ver</button>
+                        <button class="btn_item btn_editar" data-idInvestigacion="${idInvestigacion}">editar</button>
+                        <button class="btn_item btn_eliminar" data-idInvestigacion="${idInvestigacion}">eliminar</button>
+                    </div>
+                    <div class="line"></div>
+                    <div class="mask"></div>
+                </li>
+            `
+
+            return html
+        }
+
+        async function getListData() {
+            try {
+                const res = await fetch(`${url_api}/entidad/lista`)
+                const data = await res.json()
+
+                if (!data.success) {
+                    console.log("ERROR: ", data.message)
+                    return { ok: false, message: 'Ha ocurrido un error inesperado' }
+                }
+                return { ok: true, data: data.data }
+            } catch (error) {
+                console.log("error get data: ", error)
+            }
+        }
+
+        function changeVisibleLoader(visible) {
+            const loader = document.querySelector('.loader')
+            if (!loader) {
+                console.log("no hay loader")
+                return
+            }
+            if (visible) {
+                loader.classList.remove('hidden')
+            } else {
+                loader.classList.add('hidden')
+            }
+        }
+
+    </script>
+
+
+
+</body>
+
+</html>
